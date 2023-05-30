@@ -22,5 +22,5 @@ public class Doctor extends User{
   @OneToMany(mappedBy = "doctor")
   private List<Appointment> appointments;
   @ManyToOne
-  private  Hospital hospital;
+  private Hospital hospital;
 }
