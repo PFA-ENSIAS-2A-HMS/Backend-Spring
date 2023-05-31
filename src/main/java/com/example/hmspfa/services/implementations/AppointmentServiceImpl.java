@@ -1,6 +1,7 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Appointment;
+import com.example.hmspfa.exceptions.AppointmentNotFoundException;
 import com.example.hmspfa.repositories.AppointmentRepository;
 import com.example.hmspfa.services.AppointmentService;
 import jakarta.transaction.Transactional;
@@ -23,12 +24,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment getAppointmentById(Long id) {
-        return appointmentRepository.findById(id).orElse(null);
+    public Appointment getAppointmentById(Long id) throws AppointmentNotFoundException{
+        Appointment appointment = appointmentRepository.findById(id).orElseThrow(
+                ()-> new AppointmentNotFoundException("Appointment Not Found")
+        );
+       return appointment;
     }
 
     @Override
-    public void deleteAppointment(Long id) {
+    public void deleteAppointment(Long id) throws AppointmentNotFoundException {
+        Appointment appointment = appointmentRepository.findById(id).orElseThrow(
+                ()-> new AppointmentNotFoundException("Appointment Not Found")
+        );
         appointmentRepository.deleteById(id);
     }
 

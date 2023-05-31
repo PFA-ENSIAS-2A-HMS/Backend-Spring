@@ -30,25 +30,19 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Admin getAdminById(Long id) {
-        Optional<Admin> optionalAdmin = adminRepository.findById(id);
-        if (optionalAdmin.isPresent()) {
-            return optionalAdmin.get();
-        } else {
-            log.warn("Admin not found with ID: {}", id);
-            throw new AdminNotFoundException("Admin not found with ID: " + id);
-        }
+    public Admin getAdminById(Long id) throws AdminNotFoundException {
+        Admin admin = adminRepository.findById(id).orElseThrow(
+                ()-> new AdminNotFoundException("Admin Nor Found")
+        );
+        return admin;
     }
 
     @Override
-    public void deleteAdmin(Long id) {
-        try {
-
+    public void deleteAdmin(Long id) throws AdminNotFoundException {
+        Admin admin = adminRepository.findById(id).orElseThrow(
+                ()-> new AdminNotFoundException("Admin Nor Found")
+        );
             adminRepository.deleteById(id);
-        } catch (Exception e) {
-            log.error("Error while deleting the admin with ID: {}", id);
-            throw new RuntimeException("Error while deleting the admin", e);
-        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Room;
+import com.example.hmspfa.exceptions.RoomNotFoundException;
 import com.example.hmspfa.repositories.RoomRepository;
 import com.example.hmspfa.services.RoomService;
 import jakarta.transaction.Transactional;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -24,12 +26,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Room getRoomById(Long id) {
-        return roomRepository.findById(id).orElse(null);
+    public Room getRoomById(Long id) throws RoomNotFoundException {
+        return roomRepository.findById(id)
+                .orElseThrow(() -> new RoomNotFoundException("Room Not Found"));
     }
 
+
     @Override
-    public void deleteRoom(Long id) {
+    public void deleteRoom(Long id) throws RoomNotFoundException {
+        Optional<Room> roomOptional = roomRepository.findById(id);
+
+        if (roomOptional.isEmpty()) {
+            throw new RoomNotFoundException("Room Not Found");
+        }
+
         roomRepository.deleteById(id);
     }
 

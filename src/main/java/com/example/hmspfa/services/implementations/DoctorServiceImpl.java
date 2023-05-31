@@ -1,6 +1,7 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Doctor;
+import com.example.hmspfa.exceptions.DoctorNotFoundException;
 import com.example.hmspfa.repositories.DoctorRepository;
 import com.example.hmspfa.services.DoctorService;
 import jakarta.transaction.Transactional;
@@ -23,12 +24,16 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor getDoctorById(Long id) {
-        return doctorRepository.findById(id).orElse(null);
+    public Doctor getDoctorById(Long id) throws DoctorNotFoundException {
+        return doctorRepository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor Not Found")
+                );
     }
+
 
     @Override
     public void deleteDoctor(Long id) {
+
         doctorRepository.deleteById(id);
     }
 

@@ -1,6 +1,7 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Receptionist;
+import com.example.hmspfa.exceptions.ReceptionistNotFoundException;
 import com.example.hmspfa.repositories.ReceptionistRepository;
 import com.example.hmspfa.services.ReceptionistService;
 import jakarta.transaction.Transactional;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -24,12 +26,20 @@ public class ReceptionistServiceImpl implements ReceptionistService {
     }
 
     @Override
-    public Receptionist getReceptionistById(Long id) {
-        return receptionistRepository.findById(id).orElse(null);
+    public Receptionist getReceptionistById(Long id) throws ReceptionistNotFoundException {
+        return receptionistRepository.findById(id)
+                .orElseThrow(() -> new ReceptionistNotFoundException("Receptionist Not Found"));
     }
 
+
     @Override
-    public void deleteReceptionist(Long id) {
+    public void deleteReceptionist(Long id) throws ReceptionistNotFoundException {
+        Optional<Receptionist> receptionistOptional = receptionistRepository.findById(id);
+
+        if (receptionistOptional.isEmpty()) {
+            throw new ReceptionistNotFoundException("Receptionist Not Found");
+        }
+
         receptionistRepository.deleteById(id);
     }
 

@@ -1,8 +1,7 @@
 package com.example.hmspfa.web;
 
-import com.example.hmspfa.dtos.HospitalDTO;
 import com.example.hmspfa.entities.Hospital;
-import com.example.hmspfa.exceptions.HospitalNotFoundExeption;
+import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.services.HospitalService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,7 +38,7 @@ public class HospitalController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getHospitalById(@PathVariable Long id) throws HospitalNotFoundExeption {
+    public ResponseEntity<Object> getHospitalById(@PathVariable Long id) throws HospitalNotFoundException {
         ResponseEntity<Object> response;
         Hospital hospital = hospitalService.getHospitalById(id);
         if (hospital != null) {

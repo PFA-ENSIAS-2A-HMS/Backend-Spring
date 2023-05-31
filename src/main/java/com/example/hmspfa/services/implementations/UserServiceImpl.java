@@ -1,6 +1,7 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.User;
+import com.example.hmspfa.exceptions.UserNotFoundException;
 import com.example.hmspfa.repositories.UserRepository;
 import com.example.hmspfa.services.UserService;
 import jakarta.transaction.Transactional;
@@ -24,12 +25,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public User getUserById(Long id) throws UserNotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User Not Found"));
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id) throws UserNotFoundException{
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User Not Found"));
         userRepository.deleteById(id);
     }
 

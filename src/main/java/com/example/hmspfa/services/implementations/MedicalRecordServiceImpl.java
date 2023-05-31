@@ -1,12 +1,15 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.MedicalRecord;
+import com.example.hmspfa.exceptions.MedicalRecordNotFoundException;
 import com.example.hmspfa.repositories.MedicalRecordRepository;
 import com.example.hmspfa.services.MedicalRecordService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -21,12 +24,20 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public MedicalRecord getMedicalRecordById(Long id) {
-        return medicalRecordRepository.findById(id).orElse(null);
+    public MedicalRecord getMedicalRecordById(Long id) throws MedicalRecordNotFoundException {
+        return medicalRecordRepository.findById(id)
+                .orElseThrow(() -> new MedicalRecordNotFoundException("Medical Record Not Found"));
     }
 
+
     @Override
-    public void deleteMedicalRecord(Long id) {
+    public void deleteMedicalRecord(Long id) throws MedicalRecordNotFoundException {
+        Optional<MedicalRecord> medicalRecordOptional = medicalRecordRepository.findById(id);
+
+        if (medicalRecordOptional.isEmpty()) {
+            throw new MedicalRecordNotFoundException("Medical Record Not Found");
+        }
+
         medicalRecordRepository.deleteById(id);
     }
 

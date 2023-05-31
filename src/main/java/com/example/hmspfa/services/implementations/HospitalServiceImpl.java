@@ -3,7 +3,7 @@ package com.example.hmspfa.services.implementations;
 import com.example.hmspfa.entities.Hospital;
 
 import com.example.hmspfa.enums.HospitalStatus;
-import com.example.hmspfa.exceptions.HospitalNotFoundExeption;
+import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.mappers.HospitalMapperImpl;
 import com.example.hmspfa.repositories.HospitalRepository;
 import com.example.hmspfa.services.HospitalService;
@@ -30,17 +30,23 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
-    public Hospital getHospitalById(Long id) throws HospitalNotFoundExeption {
+    public Hospital getHospitalById(Long id) throws HospitalNotFoundException {
         Optional<Hospital> optionalHospital = Optional.ofNullable(hospitalRepository.findById(id).orElseThrow(
-                () -> new HospitalNotFoundExeption("Hospital Not Found !")
+                () -> new HospitalNotFoundException("Hospital Not Found !")
         ));
         return optionalHospital.orElse(null);
     }
 
     @Override
-    public void deleteHospital(Long id) {
+    public void deleteHospital(Long id) throws HospitalNotFoundException {
+        Optional<Hospital> hospitalOptional = hospitalRepository.findById(id);
+
+        if (hospitalOptional.isEmpty()) {
+            throw new HospitalNotFoundException("Hospital Not Found");
+        }
         hospitalRepository.deleteById(id);
     }
+
 
     @Override
     public Hospital updateHospital(Hospital hospital) {

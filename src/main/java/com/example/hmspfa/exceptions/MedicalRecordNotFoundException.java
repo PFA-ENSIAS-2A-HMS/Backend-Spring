@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class HospitalNotFoundExeption extends RuntimeException{
-    public HospitalNotFoundExeption(String message){
+public class MedicalRecordNotFoundException extends RuntimeException{
+    public MedicalRecordNotFoundException(String message){
         super(message);
     }
 }

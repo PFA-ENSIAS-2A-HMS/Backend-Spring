@@ -1,6 +1,7 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Consultation;
+import com.example.hmspfa.exceptions.ConsultationNotFoundException;
 import com.example.hmspfa.repositories.ConsultationRepository;
 import com.example.hmspfa.services.ConsultationService;
 import lombok.AllArgsConstructor;
@@ -23,12 +24,17 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
-    public Consultation getConsultationById(Long id) {
-        return consultationRepository.findById(id).orElse(null);
+    public Consultation getConsultationById(Long id) throws ConsultationNotFoundException {
+        return consultationRepository.findById(id).orElseThrow(
+                () -> new ConsultationNotFoundException("Consultation Not Found")
+        );
     }
 
     @Override
-    public void deleteConsultation(Long id) {
+    public void deleteConsultation(Long id) throws ConsultationNotFoundException{
+        Consultation consultation = consultationRepository.findById(id).orElseThrow(
+                () -> new ConsultationNotFoundException("Consultation Not Found")
+        );
         consultationRepository.deleteById(id);
     }
 
