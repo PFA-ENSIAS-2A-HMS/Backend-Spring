@@ -1,5 +1,6 @@
 package com.example.hmspfa.web;
 
+import com.example.hmspfa.entities.DashboardInfo;
 import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.services.HospitalService;
@@ -18,14 +19,29 @@ public class HospitalController {
 
     private HospitalService hospitalService;
 
+
+
     @GetMapping("/all")
     List<Hospital> getAllHospitals(){
         return hospitalService.getAllHospitals();
     }
+    @GetMapping("/dashboard/{hospitalId}")
+    public ResponseEntity<Object> getDashboardInfo(@PathVariable Long hospitalId) {
+        try {
+            DashboardInfo dashboardInfo = hospitalService.getDashboardInfo(hospitalId);
+            return ResponseEntity.ok(dashboardInfo);
+        } catch (HospitalNotFoundException e) {
+            String message = "Hospital not found for ID: " + hospitalId;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"" + message + "\"}");
+        }
+    }
 
-    @PostMapping("/")
-    public ResponseEntity<Object> saveHospital(@RequestBody Hospital hospital) {
-        Hospital savedHospital = hospitalService.saveHospital(hospital);
+
+    @PostMapping("/{userId}")
+    public ResponseEntity<Object> saveHospital(@RequestBody Hospital hospital,@PathVariable Long userId) {
+        Hospital savedHospital = hospitalService.saveHospital(hospital,userId);
         if(hospital==null){
             String message = "une erreur est surveune";
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -79,6 +95,4 @@ public class HospitalController {
                     .body("{\"message\": \"" + message + "\"}");
         }
     }
-
-
 }

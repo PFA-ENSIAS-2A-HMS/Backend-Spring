@@ -43,6 +43,11 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord) {
+        Optional<MedicalRecord> medicalRecordOptional = medicalRecordRepository.findById(medicalRecord.getId());
+
+        if (medicalRecordOptional.isEmpty()) {
+            throw new MedicalRecordNotFoundException("Medical Record Not Found");
+        }
         return medicalRecordRepository.save(medicalRecord);
     }
 }

@@ -33,11 +33,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void deleteInvoice(Long id) {
+        Invoice found = invoiceRepository.findById(id).orElseThrow(
+                ()->new InvoiceNotFoundException("Invoice Not found")
+        );
         invoiceRepository.deleteById(id);
     }
 
     @Override
     public Invoice updateInvoice(Invoice invoice) {
+        Invoice found = invoiceRepository.findById(invoice.getId()).orElseThrow(
+                ()->new InvoiceNotFoundException("Invoice Not found")
+        );
         return invoiceRepository.save(invoice);
     }
 

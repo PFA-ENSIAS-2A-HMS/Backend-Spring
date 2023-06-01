@@ -45,6 +45,10 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room updateRoom(Room room) {
+        Optional<Room> roomOptional = roomRepository.findById(room.getId());
+        if (roomOptional.isEmpty()) {
+            throw new RoomNotFoundException("Room Not Found");
+        }
         return roomRepository.save(room);
     }
 

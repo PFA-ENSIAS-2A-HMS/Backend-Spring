@@ -1,7 +1,10 @@
 package com.example.hmspfa.services.implementations;
 
+import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.entities.Patient;
+import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.exceptions.PatientNotFoundException;
+import com.example.hmspfa.repositories.HospitalRepository;
 import com.example.hmspfa.repositories.PatientRepository;
 import com.example.hmspfa.services.PatientService;
 import jakarta.transaction.Transactional;
@@ -18,10 +21,20 @@ import java.util.Optional;
 @Slf4j
 public class PatientServiceImpl implements PatientService {
     private final PatientRepository patientRepository;
+    private final HospitalRepository hospitalRepository;
 
     @Override
-    public Patient savePatient(Patient patient) {
-        return patientRepository.save(patient);
+    public Patient savePatient(Patient patient, Long hospitalId) {
+        try {
+            Hospital hospital = hospitalRepository.findById(hospitalId)
+                    .orElseThrow(() -> new HospitalNotFoundException("Hospital with ID " + hospitalId + " not found."));
+
+            patient.getHospitals().add(hospital);
+            return patientRepository.save(patient);
+        } catch (Exception e) {
+            log.error("Error while saving the patient: {}", e.getMessage());
+            throw new RuntimeException("Error while saving the patient", e);
+        }
     }
 
     @Override
@@ -43,6 +56,11 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Patient updatePatient(Patient patient) {
+        Optional<Patient> patientOptional = patientRepository.findById(patient.getId());
+
+        if (patientOptional.isEmpty()) {
+            throw new PatientNotFoundException("Patient Not Found");
+        }
         return patientRepository.save(patient);
     }
 

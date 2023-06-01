@@ -21,6 +21,7 @@ public abstract class User {
     private Long id;
     private String firstName;
     private String phoneNumber;
+    private String email;
     private String lastName;
     private LocalDate date_of_birth;
     private String image_url;

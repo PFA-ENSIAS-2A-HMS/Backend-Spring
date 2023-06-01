@@ -45,6 +45,11 @@ public class ReceptionistServiceImpl implements ReceptionistService {
 
     @Override
     public Receptionist updateReceptionist(Receptionist receptionist) {
+        Optional<Receptionist> receptionistOptional = receptionistRepository.findById(receptionist.getId());
+
+        if (receptionistOptional.isEmpty()) {
+            throw new ReceptionistNotFoundException("Receptionist Not Found");
+        }
         return receptionistRepository.save(receptionist);
     }
 

@@ -40,7 +40,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment updateAppointment(Appointment appointment) {
+    public Appointment updateAppointment(Appointment appointment) throws  AppointmentNotFoundException {
+        Appointment found = appointmentRepository.findById(appointment.getId()).orElseThrow(
+                ()-> new AppointmentNotFoundException("Appointment Not Found")
+        );
         return appointmentRepository.save(appointment);
     }
 

@@ -39,7 +39,10 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
-    public Consultation updateConsultation(Consultation consultation) {
+    public Consultation updateConsultation(Consultation consultation) throws ConsultationNotFoundException {
+        Consultation found = consultationRepository.findById(consultation.getId()).orElseThrow(
+                () -> new ConsultationNotFoundException("Consultation Not Found")
+        );
         return consultationRepository.save(consultation);
     }
 

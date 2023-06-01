@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 @Entity
 @Data
@@ -12,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @DiscriminatorValue("PATIENT")
 public class Patient extends User{
+   private String cin;
    private String emergencyContact;
    private String MedicalHistory;
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -19,8 +21,13 @@ public class Patient extends User{
    private List<Appointment> appointments;
 
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-   @ManyToOne
-   private Hospital hospital;
+   @ManyToMany(fetch = FetchType.LAZY)
+   @JoinTable(
+           name = "hospital_patient",
+           joinColumns = @JoinColumn(name = "patient_id"),
+           inverseJoinColumns = @JoinColumn(name = "hospital_id")
+   )
+   private List<Hospital> hospitals;
 
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @OneToMany(mappedBy = "patient",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
@@ -29,6 +36,13 @@ public class Patient extends User{
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @ManyToMany
    private List<Room> rooms;
+
+   public List<Hospital> getHospitals() {
+      if (hospitals == null) {
+         hospitals = new ArrayList<Hospital>();
+      }
+      return hospitals;
+   }
 
 
 }

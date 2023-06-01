@@ -15,9 +15,9 @@ import java.util.List;
 public class PatientController {
     private final PatientService patientService;
 
-    @PostMapping
-    public ResponseEntity<Patient> savePatient(@RequestBody Patient patient) {
-        Patient savedPatient = patientService.savePatient(patient);
+    @PostMapping("/{hospitalId}")
+    public ResponseEntity<Patient> savePatient(@RequestBody Patient patient,@PathVariable Long hospitalId) {
+        Patient savedPatient = patientService.savePatient(patient,hospitalId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPatient);
     }
 
