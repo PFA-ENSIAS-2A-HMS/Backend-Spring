@@ -1,7 +1,9 @@
 package com.example.hmspfa.entities;
 
-
+import com.example.hmspfa.enums.HospitalStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,24 +14,41 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Hospital{
+public class Hospital {
    @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
+
+   @NotBlank
    private String name;
    private String logo;
+
+   @NotBlank
    private String address;
-   @OneToMany(mappedBy = "hospital",fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+   private HospitalStatus status;
+
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @ManyToMany(mappedBy = "hospitals", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
    private List<Doctor> doctors;
 
-   @OneToMany(mappedBy = "hospital",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @ManyToMany(mappedBy = "hospitals", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
    private List<Patient> patients;
 
-   @OneToMany(mappedBy = "hospital",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @OneToMany(mappedBy = "hospital", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
    private List<Receptionist> receptionists;
 
-   @OneToMany(mappedBy = "hospital",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @OneToMany(mappedBy = "hospital", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
    private List<Room> rooms;
 
-   @OneToOne(mappedBy ="hospital")
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @OneToOne(mappedBy = "hospital")
    private Admin admin;
+
+   public void setAdmin(Admin admin) {
+      this.admin = admin;
+      admin.setHospital(this);
+   }
 }
