@@ -1,6 +1,7 @@
 package com.example.hmspfa.web;
 
 import com.example.hmspfa.entities.Appointment;
+import com.example.hmspfa.enums.AppointmentStatus;
 import com.example.hmspfa.services.AppointmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
         Appointment createdAppointment = appointmentService.saveAppointment(appointment);
         return new ResponseEntity<>(createdAppointment, HttpStatus.CREATED);
     }

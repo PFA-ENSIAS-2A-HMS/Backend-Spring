@@ -20,6 +20,8 @@ public class Patient extends User{
    private String MedicalHistory;
    private String address;
    private String bloodType;
+   @OneToOne(cascade = CascadeType.ALL,mappedBy = "patient")
+   private BiometricData biometricData;
    @Enumerated(EnumType.STRING)
    private PatientStatus status;
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

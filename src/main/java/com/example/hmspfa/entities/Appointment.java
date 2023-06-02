@@ -1,4 +1,5 @@
 package com.example.hmspfa.entities;
+import com.example.hmspfa.enums.AppointmentStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,15 +25,17 @@ public class Appointment {
     private String reason;
 
     private String additionalInfos;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
     @ManyToOne
     private Patient patient;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
     @ManyToOne
     private Doctor doctor;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "appointment")
     private List<Invoice> invoice;
+
+    private AppointmentStatus status;
 }

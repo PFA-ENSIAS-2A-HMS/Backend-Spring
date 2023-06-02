@@ -139,6 +139,11 @@ public class PatientController {
                 existingPatient.setStatus(patient.getStatus());
             }
 
+            if(patient.getPhoneNumber()!=null){
+                existingPatient.setPhoneNumber(patient.getPhoneNumber());
+            }
+
+
             Patient updatedPatient = patientService.updatePatient(existingPatient);
             return new ResponseEntity<>(updatedPatient, HttpStatus.OK);
         } else {
