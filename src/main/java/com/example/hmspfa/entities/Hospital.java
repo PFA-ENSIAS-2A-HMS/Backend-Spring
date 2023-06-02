@@ -36,7 +36,7 @@ public class Hospital {
    private List<Patient> patients;
 
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-   @OneToMany(mappedBy = "hospital", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+   @ManyToMany(mappedBy = "hospitals", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
    private List<Receptionist> receptionists;
 
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

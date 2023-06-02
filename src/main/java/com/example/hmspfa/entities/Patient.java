@@ -1,4 +1,6 @@
 package com.example.hmspfa.entities;
+
+import com.example.hmspfa.enums.PatientStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,10 @@ public class Patient extends User{
    private String cin;
    private String emergencyContact;
    private String MedicalHistory;
+   private String address;
+   private String bloodType;
+   @Enumerated(EnumType.STRING)
+   private PatientStatus status;
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @OneToMany(mappedBy = "patient")
    private List<Appointment> appointments;
@@ -43,6 +49,7 @@ public class Patient extends User{
       }
       return hospitals;
    }
+
 
 
 }

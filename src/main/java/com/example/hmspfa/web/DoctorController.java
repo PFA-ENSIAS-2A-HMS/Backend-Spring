@@ -23,13 +23,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DoctorController {
     private final DoctorService doctorService;
-    /*
-    @PostMapping("add/{hospitalId}")
-    public ResponseEntity<Doctor> saveDoctor(@RequestBody Doctor doctor,@PathVariable Long hospitalId) {
-        Doctor savedDoctor = doctorService.saveDoctor(doctor,hospitalId);
-        return new ResponseEntity<>(savedDoctor, HttpStatus.CREATED);
-    }
-   */
 
     @PostMapping("add/{hospitalId}")
     public ResponseEntity<Doctor> saveDoctor(
@@ -136,9 +129,33 @@ public class DoctorController {
         Doctor existingDoctor = doctorService.getDoctorById(id);
         if (existingDoctor != null) {
             doctor.setId(existingDoctor.getId());
-            Doctor updatedDoctor = doctorService.updateDoctor(doctor);
+            if (doctor.getFirstName() != null) {
+                existingDoctor.setFirstName(doctor.getFirstName());
+            }
+            if (doctor.getLastName() != null) {
+                existingDoctor.setLastName(doctor.getLastName());
+            }
+            if(doctor.getImage_url()!=null){
+                existingDoctor.setImage_url(doctor.getImage_url());
+            }
+            if(doctor.getEmail()!=null){
+                existingDoctor.setEmail(doctor.getEmail());
+            }
+            if(doctor.getLocation()!=null){
+                existingDoctor.setLocation(doctor.getLocation());
+            }
+            if(doctor.getSpeciality()!=null){
+                existingDoctor.setSpeciality(doctor.getSpeciality());
+            }
+            if(doctor.getGender()!=null){
+                existingDoctor.setGender(doctor.getGender());
+            }
+            if(doctor.getDate_of_birth()!=null){
+                existingDoctor.setDate_of_birth(doctor.getDate_of_birth());
+            }
+            Doctor updatedDoctor = doctorService.updateDoctor(existingDoctor);
             return new ResponseEntity<>(updatedDoctor, HttpStatus.OK);
-        }else {
+        }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

@@ -69,4 +69,9 @@ public class PatientServiceImpl implements PatientService {
         return patientRepository.findAll();
     }
 
+    @Override
+    public Patient getPatientByPhoneNumber(String phoneNumber) {
+        return patientRepository.findByPhoneNumber(phoneNumber);
+    }
+
 }
