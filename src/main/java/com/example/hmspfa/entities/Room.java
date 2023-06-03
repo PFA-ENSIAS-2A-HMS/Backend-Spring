@@ -25,8 +25,12 @@ public class Room {
     @ManyToOne
     private Hospital hospital;
 
-
+    /*
     @ManyToMany(mappedBy = "rooms")
     private List<Patient> patients;
+    */
+
+    @OneToMany(mappedBy = "room")
+    private List<PatientRoomAssignment> roomAssignments;
 
 }

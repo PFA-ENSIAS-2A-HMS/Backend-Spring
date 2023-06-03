@@ -40,10 +40,13 @@ public class Patient extends User{
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @OneToMany(mappedBy = "patient",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
    private List<MedicalRecord> medicalRecords;
-
+/*
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @ManyToMany
-   private List<Room> rooms;
+   private List<Room> rooms;*/
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @OneToMany(mappedBy = "patient")
+   private List<PatientRoomAssignment> patientAssignments;
 
    public List<Hospital> getHospitals() {
       if (hospitals == null) {
