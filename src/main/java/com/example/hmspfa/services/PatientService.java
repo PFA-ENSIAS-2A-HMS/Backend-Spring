@@ -12,4 +12,6 @@ public interface PatientService {
     Patient updatePatient(Patient patient) throws PatientNotFoundException;
 
     List<Patient> getAllPatients();
+
+    Patient getPatientByPhoneNumber(String phoneNumber);
 }

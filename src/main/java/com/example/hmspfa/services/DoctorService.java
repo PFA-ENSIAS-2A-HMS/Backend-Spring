@@ -12,4 +12,5 @@ public interface DoctorService {
     Doctor updateDoctor(Doctor doctor) throws DoctorNotFoundException;
 
     List<Doctor> getAllDoctors();
+
 }

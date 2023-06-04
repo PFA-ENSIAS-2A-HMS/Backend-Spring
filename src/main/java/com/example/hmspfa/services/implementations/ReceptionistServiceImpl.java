@@ -1,7 +1,10 @@
 package com.example.hmspfa.services.implementations;
 
+import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.entities.Receptionist;
+import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.exceptions.ReceptionistNotFoundException;
+import com.example.hmspfa.repositories.HospitalRepository;
 import com.example.hmspfa.repositories.ReceptionistRepository;
 import com.example.hmspfa.services.ReceptionistService;
 import jakarta.transaction.Transactional;
@@ -19,10 +22,25 @@ import java.util.Optional;
 public class ReceptionistServiceImpl implements ReceptionistService {
 
     private final ReceptionistRepository receptionistRepository;
+    private final HospitalRepository hospitalRepository;
 
     @Override
     public Receptionist saveReceptionist(Receptionist receptionist) {
         return receptionistRepository.save(receptionist);
+    }
+
+    @Override
+    public Receptionist saveReceptionist(Receptionist receptionist, Long hospitalId) {
+        try {
+            Hospital hospital = hospitalRepository.findById(hospitalId)
+                    .orElseThrow(() -> new HospitalNotFoundException("Hospital with ID " + hospitalId + " not found."));
+
+            receptionist.getHospitals().add(hospital);
+            return receptionistRepository.save(receptionist);
+        } catch (Exception e) {
+            log.error("Error while saving the receptionist: {}", e.getMessage());
+            throw new RuntimeException("Error while saving the receptionist", e);
+        }
     }
 
     @Override

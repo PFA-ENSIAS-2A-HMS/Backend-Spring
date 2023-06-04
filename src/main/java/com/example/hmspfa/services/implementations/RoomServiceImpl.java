@@ -1,7 +1,10 @@
 package com.example.hmspfa.services.implementations;
 
+import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.entities.Room;
+import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.exceptions.RoomNotFoundException;
+import com.example.hmspfa.repositories.HospitalRepository;
 import com.example.hmspfa.repositories.RoomRepository;
 import com.example.hmspfa.services.RoomService;
 import jakarta.transaction.Transactional;
@@ -19,9 +22,16 @@ import java.util.Optional;
 public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
+    private final HospitalRepository hospitalRepository;
 
     @Override
-    public Room saveRoom(Room room) {
+    public Room saveRoom(Room room, Long hospitalId) {
+        Optional<Hospital> hospitalOptional = hospitalRepository.findById(hospitalId);
+        if(!hospitalOptional.isPresent()){
+            throw new HospitalNotFoundException("Hospital Not Found");
+        }
+        Hospital hospital= hospitalOptional.get();
+        room.setHospital(hospital);
         return roomRepository.save(room);
     }
 
