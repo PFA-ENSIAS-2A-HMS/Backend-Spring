@@ -1,6 +1,7 @@
 package com.example.hmspfa.services;
 
 import com.example.hmspfa.entities.Appointment;
+import com.example.hmspfa.entities.Doctor;
 import com.example.hmspfa.exceptions.AppointmentNotFoundException;
 
 import java.util.List;
@@ -12,5 +13,6 @@ public interface AppointmentService {
     Appointment updateAppointment(Appointment appointment) throws AppointmentNotFoundException;
 
     List<Appointment> getAllAppointments();
-    // TODO : add other methods
+
+    List<Appointment> getAppointmentByDoctor(Doctor doctor);
 }

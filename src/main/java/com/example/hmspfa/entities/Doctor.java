@@ -18,6 +18,7 @@ public class Doctor extends User {
   private String speciality;
   private String location;
 
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
   private List<Appointment> appointments;
 

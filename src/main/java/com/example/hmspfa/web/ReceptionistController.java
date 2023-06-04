@@ -3,8 +3,13 @@ package com.example.hmspfa.web;
 import com.example.hmspfa.entities.Receptionist;
 import com.example.hmspfa.services.ReceptionistService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -18,6 +23,46 @@ public class ReceptionistController {
     public Receptionist saveReceptionist(@RequestBody Receptionist receptionist) {
         return receptionistService.saveReceptionist(receptionist);
     }
+
+    @PostMapping("/add/{hospitalId}")
+    public ResponseEntity<Receptionist> saveReceptionist(
+            @ModelAttribute Receptionist receptionist,
+            @PathVariable Long hospitalId,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
+    ) throws IOException {
+        // Set the default image URL if the imageFile is empty
+        if ( imageFile == null || imageFile.isEmpty()) {
+            receptionist.setImage_url("images/"+receptionist.getGender()+".jpg");
+        } else {
+            // Process the image file
+            try {
+                String fileName = imageFile.getOriginalFilename();
+                String directory = "images/"; // Relative path within the project
+                String imageUrl = directory + fileName; // Set the path where you want to store the image
+
+                // Get the absolute path to the images directory within the project
+                String absolutePath = new File("src/main/resources/" + directory).getAbsolutePath();
+
+                // Create the images directory if it doesn't exist
+                File imageDir = new File(absolutePath);
+                if (!imageDir.exists()) {
+                    imageDir.mkdirs();
+                }
+
+                // Save the image file to the server
+                File image = new File(imageDir, fileName);
+                imageFile.transferTo(image);
+                receptionist.setImage_url(imageUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Handle the exception
+            }
+        }
+        // Save the receptionist
+        Receptionist savedReceptionist = receptionistService.saveReceptionist(receptionist,hospitalId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedReceptionist);
+    }
+
 
     @GetMapping("{id}")
     public Receptionist getReceptionistById(@PathVariable Long id) {

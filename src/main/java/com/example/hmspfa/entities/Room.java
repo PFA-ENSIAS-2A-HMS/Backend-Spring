@@ -25,8 +25,12 @@ public class Room {
     @ManyToOne
     private Hospital hospital;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    /*
     @ManyToMany(mappedBy = "rooms")
     private List<Patient> patients;
+    */
+
+    @OneToMany(mappedBy = "room")
+    private List<PatientRoomAssignment> roomAssignments;
 
 }

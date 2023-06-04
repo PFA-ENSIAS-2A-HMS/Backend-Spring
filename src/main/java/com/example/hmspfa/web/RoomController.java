@@ -14,9 +14,9 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    @PostMapping
-    public Room saveRoom(@RequestBody Room room) {
-        return roomService.saveRoom(room);
+    @PostMapping("/{hospitalId}")
+    public Room saveRoom(@RequestBody Room room,@PathVariable Long hospitalId) {
+        return roomService.saveRoom(room,hospitalId);
     }
 
     @GetMapping("{id}")

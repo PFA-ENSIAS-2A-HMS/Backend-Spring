@@ -1,6 +1,8 @@
 package com.example.hmspfa.web;
 
 import com.example.hmspfa.entities.Doctor;
+import com.example.hmspfa.entities.Patient;
+import com.example.hmspfa.repositories.DoctorRepository;
 import com.example.hmspfa.services.DoctorService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -17,19 +19,14 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/doctors")
 @AllArgsConstructor
 public class DoctorController {
     private final DoctorService doctorService;
-    /*
-    @PostMapping("add/{hospitalId}")
-    public ResponseEntity<Doctor> saveDoctor(@RequestBody Doctor doctor,@PathVariable Long hospitalId) {
-        Doctor savedDoctor = doctorService.saveDoctor(doctor,hospitalId);
-        return new ResponseEntity<>(savedDoctor, HttpStatus.CREATED);
-    }
-   */
+    private final DoctorRepository doctorRepository;
 
     @PostMapping("add/{hospitalId}")
     public ResponseEntity<Doctor> saveDoctor(
@@ -125,6 +122,7 @@ public class DoctorController {
         }
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long id) {
         doctorService.deleteDoctor(id);
@@ -136,9 +134,33 @@ public class DoctorController {
         Doctor existingDoctor = doctorService.getDoctorById(id);
         if (existingDoctor != null) {
             doctor.setId(existingDoctor.getId());
-            Doctor updatedDoctor = doctorService.updateDoctor(doctor);
+            if (doctor.getFirstName() != null) {
+                existingDoctor.setFirstName(doctor.getFirstName());
+            }
+            if (doctor.getLastName() != null) {
+                existingDoctor.setLastName(doctor.getLastName());
+            }
+            if(doctor.getImage_url()!=null){
+                existingDoctor.setImage_url(doctor.getImage_url());
+            }
+            if(doctor.getEmail()!=null){
+                existingDoctor.setEmail(doctor.getEmail());
+            }
+            if(doctor.getLocation()!=null){
+                existingDoctor.setLocation(doctor.getLocation());
+            }
+            if(doctor.getSpeciality()!=null){
+                existingDoctor.setSpeciality(doctor.getSpeciality());
+            }
+            if(doctor.getGender()!=null){
+                existingDoctor.setGender(doctor.getGender());
+            }
+            if(doctor.getDate_of_birth()!=null){
+                existingDoctor.setDate_of_birth(doctor.getDate_of_birth());
+            }
+            Doctor updatedDoctor = doctorService.updateDoctor(existingDoctor);
             return new ResponseEntity<>(updatedDoctor, HttpStatus.OK);
-        }else {
+        }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
