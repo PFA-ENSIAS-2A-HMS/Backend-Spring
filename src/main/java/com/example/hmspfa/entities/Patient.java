@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @DiscriminatorValue("PATIENT")
 public class Patient extends User{
+   private String address;
    private String cin;
    private String emergencyContact;
    private String MedicalHistory;

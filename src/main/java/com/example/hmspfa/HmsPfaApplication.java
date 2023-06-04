@@ -19,7 +19,7 @@ public class HmsPfaApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/v1/**")
-						.allowedOrigins("http://localhost:4200")
+						.allowedOrigins("*")
 						.allowedMethods("GET", "POST", "PUT", "DELETE")
 						.allowedHeaders("*");
 			}
