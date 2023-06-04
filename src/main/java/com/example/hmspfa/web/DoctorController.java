@@ -1,6 +1,8 @@
 package com.example.hmspfa.web;
 
 import com.example.hmspfa.entities.Doctor;
+import com.example.hmspfa.entities.Patient;
+import com.example.hmspfa.repositories.DoctorRepository;
 import com.example.hmspfa.services.DoctorService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -17,12 +19,14 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/doctors")
 @AllArgsConstructor
 public class DoctorController {
     private final DoctorService doctorService;
+    private final DoctorRepository doctorRepository;
 
     @PostMapping("add/{hospitalId}")
     public ResponseEntity<Doctor> saveDoctor(
@@ -117,6 +121,7 @@ public class DoctorController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long id) {

@@ -1,6 +1,7 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Appointment;
+import com.example.hmspfa.entities.Doctor;
 import com.example.hmspfa.exceptions.AppointmentNotFoundException;
 import com.example.hmspfa.repositories.AppointmentRepository;
 import com.example.hmspfa.services.AppointmentService;
@@ -50,5 +51,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public List<Appointment> getAllAppointments() {
         return appointmentRepository.findAll();
+    }
+
+    @Override
+    public List<Appointment> getAppointmentByDoctor(Doctor doctor) {
+        return appointmentRepository.findAppointmentByDoctor(doctor);
     }
 }

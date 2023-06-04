@@ -1,13 +1,17 @@
 package com.example.hmspfa.web;
 
 import com.example.hmspfa.entities.Appointment;
+import com.example.hmspfa.entities.Doctor;
+import com.example.hmspfa.entities.Patient;
 import com.example.hmspfa.enums.AppointmentStatus;
 import com.example.hmspfa.services.AppointmentService;
+import com.example.hmspfa.services.DoctorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AppointmentController {
     private final AppointmentService appointmentService;
-
+    private final DoctorService doctorService;
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
         appointment.setStatus(AppointmentStatus.CONFIRMED);
@@ -33,12 +37,23 @@ public class AppointmentController {
         }
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
         appointmentService.deleteAppointment(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/doctor/{doctorId}")
+    public List<Patient> getPatientByDoctor(@PathVariable Long doctorId){
+        List<Patient> patients = new ArrayList<>();
+        Doctor doctor = doctorService.getDoctorById(doctorId);
+        List<Appointment> appointments = appointmentService.getAppointmentByDoctor(doctor);
+        for (Appointment appointment : appointments) {
+           patients.add(appointment.getPatient());
+        }
+        return patients;
+    }
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
         appointment.setId(id);
