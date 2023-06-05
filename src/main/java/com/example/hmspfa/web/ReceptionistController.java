@@ -1,10 +1,15 @@
 package com.example.hmspfa.web;
 
 import com.example.hmspfa.entities.Receptionist;
+import com.example.hmspfa.resources.responses.AuthenticationResponse;
+import com.example.hmspfa.services.EmailSenderService;
 import com.example.hmspfa.services.ReceptionistService;
+import com.example.hmspfa.services.implementations.AuthenticationServiceImpl;
+import com.example.hmspfa.services.implementations.PasswordGeneratorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,16 +21,17 @@ import java.util.List;
 @RequestMapping("api/v1/receptionists")
 @AllArgsConstructor
 public class ReceptionistController {
-
     private final ReceptionistService receptionistService;
-
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationServiceImpl authenticationService;
+    private final PasswordGeneratorService passwordGeneratorService;
+    private final EmailSenderService emailSenderService;
     @PostMapping
     public Receptionist saveReceptionist(@RequestBody Receptionist receptionist) {
         return receptionistService.saveReceptionist(receptionist);
     }
-
     @PostMapping("/add/{hospitalId}")
-    public ResponseEntity<Receptionist> saveReceptionist(
+    public ResponseEntity<AuthenticationResponse> saveReceptionist(
             @ModelAttribute Receptionist receptionist,
             @PathVariable Long hospitalId,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
@@ -58,9 +64,15 @@ public class ReceptionistController {
                 // Handle the exception
             }
         }
-        // Save the receptionist
-        Receptionist savedReceptionist = receptionistService.saveReceptionist(receptionist,hospitalId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedReceptionist);
+
+        String password = passwordGeneratorService.generatePassword(10);
+        receptionist.setPassword(password);
+        emailSenderService.sendEmail(receptionist.getEmail(), "Envoi du mot de passe utilisateur", "Bonjour,\n\nVotre compte a été créé avec succès. Veuillez trouver ci-dessous vos informations de connexion :\n\nEmail : " + receptionist.getEmail() + "\nMot de passe : " + password + "\n\nN'hésitez pas à nous contacter si vous avez des questions ou des préoccupations.\n\nCordialement,\n[Hospital Management System]");
+        receptionist.setPassword(passwordEncoder.encode(receptionist.getPassword()));
+        receptionist.setPassword(passwordEncoder.encode(receptionist.getPassword()));
+        // Save the doctor and associate with the hospital
+        receptionist.setPassword(passwordEncoder.encode(receptionist.getPassword()));
+        return ResponseEntity.ok(authenticationService.registerReceptionist(receptionist,hospitalId));
     }
 
 

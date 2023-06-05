@@ -4,10 +4,14 @@ import com.example.hmspfa.enums.Gender;
 import com.example.hmspfa.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
 @Entity
 @Data
@@ -15,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="User_Role",length = 50,discriminatorType = DiscriminatorType.STRING)
-public abstract class User {
+public  class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,4 +34,45 @@ public abstract class User {
     private String password;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        //return role.getAuthorities(); //ADDED THIS
+          return null;
+    }
+
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
 }
