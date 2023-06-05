@@ -19,7 +19,6 @@ public class Patient extends User{
    private String cin;
    private String emergencyContact;
    private String MedicalHistory;
-   private String address;
    private String bloodType;
    @OneToOne(cascade = CascadeType.ALL,mappedBy = "patient")
    private BiometricData biometricData;
