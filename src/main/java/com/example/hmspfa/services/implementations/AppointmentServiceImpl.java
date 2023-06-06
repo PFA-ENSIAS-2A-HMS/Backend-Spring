@@ -2,8 +2,10 @@ package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Appointment;
 import com.example.hmspfa.entities.Doctor;
+import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.exceptions.AppointmentNotFoundException;
 import com.example.hmspfa.repositories.AppointmentRepository;
+import com.example.hmspfa.repositories.PatientRepository;
 import com.example.hmspfa.services.AppointmentService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
+    private final PatientRepository patientRepository;
 
     @Override
     public Appointment saveAppointment(Appointment appointment) {
@@ -57,4 +60,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<Appointment> getAppointmentByDoctor(Doctor doctor) {
         return appointmentRepository.findAppointmentByDoctor(doctor);
     }
+
+    @Override
+    public List<Appointment> getAppointmentByHospital(Hospital hospital) {
+        return appointmentRepository.findByHospital(hospital);
+    }
+
 }

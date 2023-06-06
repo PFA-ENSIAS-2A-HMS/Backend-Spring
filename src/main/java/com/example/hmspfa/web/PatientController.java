@@ -1,9 +1,14 @@
 package com.example.hmspfa.web;
 
+import com.example.hmspfa.entities.Doctor;
+import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.entities.Patient;
 import com.example.hmspfa.entities.Receptionist;
 import com.example.hmspfa.enums.PatientStatus;
+import com.example.hmspfa.enums.Role;
+import com.example.hmspfa.services.HospitalService;
 import com.example.hmspfa.services.PatientService;
+import com.example.hmspfa.services.ReceptionistService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +24,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PatientController {
     private final PatientService patientService;
-
+    private final ReceptionistService receptionistService;
+    private final HospitalService hospitalService;
     @PostMapping("/{hospitalId}")
     public ResponseEntity<Patient> savePatient(@RequestBody Patient patient,@PathVariable Long hospitalId) {
         Patient savedPatient = patientService.savePatient(patient,hospitalId);
@@ -60,7 +66,9 @@ public class PatientController {
                 // Handle the exception
             }
         }
-
+        Hospital hospital1 = hospitalService.getHospitalById(hospitalId);
+        patient.getHospitals().add(hospital1);
+        patient.setRole(Role.PATIENT);
         // Save the patient and associate with the hospital
         patient.setStatus(PatientStatus.PENDING);
         Patient savedPatient = patientService.savePatient(patient, hospitalId);
@@ -95,7 +103,16 @@ public class PatientController {
         return ResponseEntity.noContent().build();
     }
 
-
+    @GetMapping("/hospital/{id}")
+    public ResponseEntity<Hospital> getReceptionistHospitalById(@PathVariable("id") Long id) {
+        Patient patient = patientService.getPatientById(id);
+        Hospital hospital = patient.getHospitals().get(0);
+        if (hospital != null) {
+            return new ResponseEntity<>(hospital, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable("id") Long id, @RequestBody Patient patient) {

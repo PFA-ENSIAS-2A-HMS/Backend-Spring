@@ -3,10 +3,12 @@ package com.example.hmspfa.web;
 import com.example.hmspfa.entities.Doctor;
 import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.entities.Patient;
+import com.example.hmspfa.enums.Role;
 import com.example.hmspfa.repositories.DoctorRepository;
 import com.example.hmspfa.resources.responses.AuthenticationResponse;
 import com.example.hmspfa.services.DoctorService;
 import com.example.hmspfa.services.EmailSenderService;
+import com.example.hmspfa.services.HospitalService;
 import com.example.hmspfa.services.implementations.AuthenticationServiceImpl;
 import com.example.hmspfa.services.implementations.PasswordGeneratorService;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ public class DoctorController {
     private final AuthenticationServiceImpl authenticationService;
     private final EmailSenderService emailSenderService;
     private final PasswordGeneratorService passwordGeneratorService;
+    private final HospitalService hospitalService;
     @PostMapping("add/{hospitalId}")
     public ResponseEntity<AuthenticationResponse> saveDoctor(
             @ModelAttribute Doctor doctor,
@@ -75,10 +78,12 @@ public class DoctorController {
 
         String password = passwordGeneratorService.generatePassword(10);
         doctor.setPassword(password);
-        emailSenderService.sendEmail(doctor.getEmail(), "Envoi du mot de passe utilisateur", "Bonjour,\n\nVotre compte a été créé avec succès. Veuillez trouver ci-dessous vos informations de connexion :\n\nEmail : " + doctor.getEmail() + "\nMot de passe : " + password + "\n\nN'hésitez pas à nous contacter si vous avez des questions ou des préoccupations.\n\nCordialement,\n[Hospital Management System]");
-        doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
+        Hospital hospital1 = hospitalService.getHospitalById(hospitalId);
+        doctor.getHospitals().add(hospital1);
+        emailSenderService.sendEmail(doctor.getEmail(), "Sending User Password", "Hello,\n\nYour account has been successfully created. Please find below your login information:\n\nEmail: " + doctor.getEmail() + "\nPassword: " + password + "\n\nFeel free to contact us if you have any questions or concerns.\n\nBest regards,\n[Hospital Management System]");
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
         return ResponseEntity.ok(authenticationService.registerDoctor(doctor,hospitalId));
+
     }
 
 
@@ -134,7 +139,7 @@ public class DoctorController {
         Hospital hospital = doctor.getHospitals().get(0);
         if (hospital != null) {
             return new ResponseEntity<>(hospital, HttpStatus.OK);
-        } else {
+        }else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -159,6 +164,17 @@ public class DoctorController {
         Doctor doctor = doctorService.getDoctorById(id);
         if (doctor != null) {
             return new ResponseEntity<>(doctor, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/hospitals/{id}")
+    public ResponseEntity<List<Doctor>> getHospitalsByDoctorId(@PathVariable("id") Long id) {
+        Hospital hospital = hospitalService.getHospitalById(id);
+        List<Doctor> doctors = hospital.getDoctors();
+        if (doctors != null) {
+            return new ResponseEntity<>(doctors, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

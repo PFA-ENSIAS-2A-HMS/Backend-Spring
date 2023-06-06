@@ -38,6 +38,10 @@ public class Patient extends User{
    private List<Hospital> hospitals;
 
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @ManyToOne
+   private SuperAdmin superAdmin;
+
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @OneToMany(mappedBy = "patient",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
    private List<MedicalRecord> medicalRecords;
 /*

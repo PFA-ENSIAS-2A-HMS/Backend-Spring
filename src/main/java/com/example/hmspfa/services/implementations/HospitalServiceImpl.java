@@ -10,6 +10,8 @@ import com.example.hmspfa.exceptions.UserNotFoundException;
 import com.example.hmspfa.mappers.HospitalMapperImpl;
 import com.example.hmspfa.repositories.AdminRepository;
 import com.example.hmspfa.repositories.HospitalRepository;
+import com.example.hmspfa.repositories.RoomRepository;
+import com.example.hmspfa.services.AppointmentService;
 import com.example.hmspfa.services.HospitalService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -27,7 +29,10 @@ public class HospitalServiceImpl implements HospitalService {
 
     private final HospitalRepository hospitalRepository;
     private final AdminRepository adminRepository;
+    private final RoomRepository roomRepository;
     private final HospitalMapperImpl hospitalMapper;
+    private final AppointmentService appointmentService;
+
     @Override
     public Hospital saveHospital(Hospital hospital, Long userId) throws UserNotFoundException {
         hospital.setStatus(HospitalStatus.CREATED);
@@ -86,11 +91,16 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     public DashboardInfo getDashboardInfo(Long hospitalId) throws HospitalNotFoundException {
         Optional<Hospital> hospital = hospitalRepository.findById(hospitalId);
-            int totalDoctors = hospital.get().getDoctors().size();
-            int totalPatients = hospital.get().getPatients().size();
-            int totalAppointments = 0; // Logic to calculate total appointments for the hospital
-            int totalRooms = hospital.get().getRooms().size();
+        if(!hospital.isPresent()){
+            throw new HospitalNotFoundException("Hospital Not Found !");
+        }
+             Hospital getHospital  =  hospital.get();
 
+            int totalDoctors = getHospital.getDoctors().size();
+            int totalPatients = getHospital.getPatients().size();
+            int totalAppointments = appointmentService.getAppointmentByHospital(getHospital).size();
+            System.out.println(totalAppointments);// Logic to calculate total appointments for the hospital
+            int totalRooms = roomRepository.findByHospital(getHospital).size();
         return new DashboardInfo(totalDoctors, totalPatients, totalAppointments, totalRooms);
     }
 

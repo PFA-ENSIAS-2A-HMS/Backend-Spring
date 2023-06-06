@@ -1,12 +1,10 @@
 package com.example.hmspfa.web;
 
-import com.example.hmspfa.entities.Admin;
-import com.example.hmspfa.entities.Doctor;
-import com.example.hmspfa.entities.Patient;
-import com.example.hmspfa.entities.Receptionist;
+import com.example.hmspfa.entities.*;
 import com.example.hmspfa.enums.PatientStatus;
 import com.example.hmspfa.resources.RequestModels.AuthenticationRequest;
 import com.example.hmspfa.resources.responses.AuthenticationResponse;
+import com.example.hmspfa.services.HospitalService;
 import com.example.hmspfa.services.PatientService;
 import com.example.hmspfa.services.implementations.AuthenticationServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +27,7 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
     private final PasswordEncoder passwordEncoder;
     private final PatientService patientService;
+    private final HospitalService hospitalService;
 
     @PostMapping("/register/receptionist/{hospitalId}")
     public ResponseEntity<AuthenticationResponse> registerReceptionist(@RequestBody Receptionist request,
@@ -62,6 +61,7 @@ public class AuthenticationController {
                 // Handle the exception
             }
         }
+
         return ResponseEntity.ok(authenticationService.registerReceptionist(request,hospitalId));
     }
     @PostMapping("/register/doctor/{hospitalId}")
@@ -104,6 +104,7 @@ public class AuthenticationController {
                                                                   @PathVariable Long hospitalId,
                                                                   @RequestParam(value = "imageFile", required = false) MultipartFile imageFile)throws IOException{
         request.setPassword(passwordEncoder.encode(request.getPassword()));
+
         if (imageFile == null || imageFile.isEmpty()) {
             request.setImage_url("images/"+request.getGender()+".jpg");
         } else {

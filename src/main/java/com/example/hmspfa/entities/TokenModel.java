@@ -1,5 +1,6 @@
 package com.example.hmspfa.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +21,12 @@ public class TokenModel {
     @Column(unique = true)
     public String token;
 
+
     @Enumerated(EnumType.STRING)
     public TokenType tokenType = TokenType.BEARER;
-
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public boolean revoked;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public boolean expired;
 
     @ManyToOne(fetch = FetchType.LAZY)

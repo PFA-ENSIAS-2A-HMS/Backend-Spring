@@ -1,8 +1,10 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Admin;
+import com.example.hmspfa.entities.User;
 import com.example.hmspfa.exceptions.AdminNotFoundException;
 import com.example.hmspfa.repositories.AdminRepository;
+import com.example.hmspfa.repositories.TokenModelRepository;
 import com.example.hmspfa.services.AdminService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,7 +20,7 @@ import java.util.Optional;
 @Slf4j
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
-
+    private final TokenModelRepository tokenModelRepository;
     @Override
     public Admin saveAdmin(Admin admin) {
         try {
@@ -42,7 +44,9 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository.findById(id).orElseThrow(
                 ()-> new AdminNotFoundException("Admin Nor Found")
         );
-            adminRepository.deleteById(id);
+        User user = admin;
+        tokenModelRepository.deleteByUser(user);
+        adminRepository.deleteById(id);
     }
 
     @Override

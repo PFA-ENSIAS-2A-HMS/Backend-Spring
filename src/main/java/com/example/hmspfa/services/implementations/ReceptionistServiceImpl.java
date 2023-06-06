@@ -1,11 +1,14 @@
 package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Hospital;
+import com.example.hmspfa.entities.Patient;
 import com.example.hmspfa.entities.Receptionist;
+import com.example.hmspfa.entities.User;
 import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.exceptions.ReceptionistNotFoundException;
 import com.example.hmspfa.repositories.HospitalRepository;
 import com.example.hmspfa.repositories.ReceptionistRepository;
+import com.example.hmspfa.repositories.TokenModelRepository;
 import com.example.hmspfa.services.ReceptionistService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -23,6 +26,8 @@ public class ReceptionistServiceImpl implements ReceptionistService {
 
     private final ReceptionistRepository receptionistRepository;
     private final HospitalRepository hospitalRepository;
+
+    private final TokenModelRepository tokenModelRepository;
 
     @Override
     public Receptionist saveReceptionist(Receptionist receptionist) {
@@ -57,7 +62,9 @@ public class ReceptionistServiceImpl implements ReceptionistService {
         if (receptionistOptional.isEmpty()) {
             throw new ReceptionistNotFoundException("Receptionist Not Found");
         }
-
+        Receptionist receptionist = receptionistOptional.get();
+        User user = receptionist;
+        tokenModelRepository.deleteByUser(user);
         receptionistRepository.deleteById(id);
     }
 

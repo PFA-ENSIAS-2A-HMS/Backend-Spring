@@ -31,6 +31,9 @@ public class Doctor extends User {
   )
   private List<Hospital> hospitals;
 
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  @ManyToOne
+  private SuperAdmin superAdmin;
   public List<Hospital> getHospitals() {
     if (hospitals == null) {
       hospitals = new ArrayList<Hospital>();

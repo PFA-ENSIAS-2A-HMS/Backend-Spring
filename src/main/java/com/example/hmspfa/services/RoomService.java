@@ -1,5 +1,6 @@
 package com.example.hmspfa.services;
 
+import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.entities.Room;
 import com.example.hmspfa.exceptions.RoomNotFoundException;
 
@@ -12,4 +13,6 @@ public interface RoomService {
     Room updateRoom(Room room) throws RoomNotFoundException;
 
     List<Room> getAllRooms();
+
+    List<Room> getRoomByHospital(Hospital hospital);
 }

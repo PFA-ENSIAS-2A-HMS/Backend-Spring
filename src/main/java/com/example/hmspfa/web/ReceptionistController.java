@@ -1,8 +1,11 @@
 package com.example.hmspfa.web;
 
+import com.example.hmspfa.entities.Hospital;
 import com.example.hmspfa.entities.Receptionist;
+import com.example.hmspfa.enums.Role;
 import com.example.hmspfa.resources.responses.AuthenticationResponse;
 import com.example.hmspfa.services.EmailSenderService;
+import com.example.hmspfa.services.HospitalService;
 import com.example.hmspfa.services.ReceptionistService;
 import com.example.hmspfa.services.implementations.AuthenticationServiceImpl;
 import com.example.hmspfa.services.implementations.PasswordGeneratorService;
@@ -26,6 +29,7 @@ public class ReceptionistController {
     private final AuthenticationServiceImpl authenticationService;
     private final PasswordGeneratorService passwordGeneratorService;
     private final EmailSenderService emailSenderService;
+    private final HospitalService hospitalService;
     @PostMapping
     public Receptionist saveReceptionist(@RequestBody Receptionist receptionist) {
         return receptionistService.saveReceptionist(receptionist);
@@ -65,16 +69,19 @@ public class ReceptionistController {
             }
         }
 
+
         String password = passwordGeneratorService.generatePassword(10);
         receptionist.setPassword(password);
-        emailSenderService.sendEmail(receptionist.getEmail(), "Envoi du mot de passe utilisateur", "Bonjour,\n\nVotre compte a été créé avec succès. Veuillez trouver ci-dessous vos informations de connexion :\n\nEmail : " + receptionist.getEmail() + "\nMot de passe : " + password + "\n\nN'hésitez pas à nous contacter si vous avez des questions ou des préoccupations.\n\nCordialement,\n[Hospital Management System]");
+        emailSenderService.sendEmail(receptionist.getEmail(), "Sending User Password", "Hello,\n\nYour account has been successfully created. Please find below your login information:\n\nEmail: " + receptionist.getEmail() + "\nPassword: " + password + "\n\nFeel free to contact us if you have any questions or concerns.\n\nBest regards,\n[Hospital Management System]");
         receptionist.setPassword(passwordEncoder.encode(receptionist.getPassword()));
         receptionist.setPassword(passwordEncoder.encode(receptionist.getPassword()));
+        Hospital hospital1 = hospitalService.getHospitalById(hospitalId);
+        receptionist.getHospitals().add(hospital1);
+        receptionist.setRole(Role.RECEPTIONIST);
         // Save the doctor and associate with the hospital
         receptionist.setPassword(passwordEncoder.encode(receptionist.getPassword()));
         return ResponseEntity.ok(authenticationService.registerReceptionist(receptionist,hospitalId));
     }
-
 
     @GetMapping("{id}")
     public Receptionist getReceptionistById(@PathVariable Long id) {
@@ -91,6 +98,16 @@ public class ReceptionistController {
         return receptionistService.updateReceptionist(receptionist);
     }
 
+    @GetMapping("/hospital/{id}")
+    public ResponseEntity<Hospital> getReceptionistHospitalById(@PathVariable("id") Long id) {
+        Receptionist receptionist = receptionistService.getReceptionistById(id);
+        Hospital hospital = receptionist.getHospitals().get(0);
+        if (hospital != null) {
+            return new ResponseEntity<>(hospital, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
     @DeleteMapping("{id}")
     public void deleteReceptionist(@PathVariable Long id) {
         receptionistService.deleteReceptionist(id);

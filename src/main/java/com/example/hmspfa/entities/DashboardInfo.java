@@ -12,5 +12,5 @@ public class DashboardInfo {
     private int totalPatients;
     private int totalAppointments;
     private int totalRooms;
-
+    
 }

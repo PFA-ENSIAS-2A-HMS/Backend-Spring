@@ -2,10 +2,12 @@ package com.example.hmspfa.services.implementations;
 
 import com.example.hmspfa.entities.Doctor;
 import com.example.hmspfa.entities.Hospital;
+import com.example.hmspfa.entities.User;
 import com.example.hmspfa.exceptions.DoctorNotFoundException;
 import com.example.hmspfa.exceptions.HospitalNotFoundException;
 import com.example.hmspfa.repositories.DoctorRepository;
 import com.example.hmspfa.repositories.HospitalRepository;
+import com.example.hmspfa.repositories.TokenModelRepository;
 import com.example.hmspfa.services.DoctorService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,8 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final HospitalRepository hospitalRepository;
     private final HospitalServiceImpl hospitalService;
+
+    private final TokenModelRepository tokenModelRepository;
 
     @Override
     public Doctor saveDoctor(Doctor doctor, Long hospitalId) {
@@ -52,6 +56,8 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = doctorRepository.findById(id).orElseThrow(
                 () -> new DoctorNotFoundException("Doctor Not Found")
         );
+        User user = doctor;
+        tokenModelRepository.deleteByUser(user);
         doctorRepository.deleteById(id);
     }
 

@@ -1,8 +1,8 @@
 package com.example.hmspfa.services.implementations;
 
-
 import com.example.hmspfa.config.JwtService;
 import com.example.hmspfa.entities.*;
+import com.example.hmspfa.enums.Role;
 import com.example.hmspfa.repositories.TokenRepository;
 import com.example.hmspfa.repositories.UserRepository;
 import com.example.hmspfa.resources.RequestModels.AuthenticationRequest;
@@ -41,6 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerAdmin(Admin request){
+        request.setRole(Role.ADMIN);
         Admin admin  = adminService.saveAdmin(request);
 
         var jwtToken = jwtService.generateToken((UserDetails) admin);
@@ -58,6 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerPatient(Patient request,Long hospitalId){
+        request.setRole(Role.PATIENT);
         Patient patient  = patientService.savePatient(request,hospitalId);
         var jwtToken = jwtService.generateToken((UserDetails) patient);
         var refreshToken = jwtService.generateRefreshToken((UserDetails) patient);
@@ -73,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
     @Override
     public AuthenticationResponse registerReceptionist(Receptionist request,Long hospitalId){
-
+        request.setRole(Role.RECEPTIONIST);
         Receptionist receptionist  = receptionistService.saveReceptionist(request,hospitalId);
         var jwtToken = jwtService.generateToken((UserDetails) receptionist);
         var refreshToken = jwtService.generateRefreshToken((UserDetails) receptionist);
@@ -87,9 +89,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .id(receptionist.getId())
                 .build();
     }
+
     @Override
     public AuthenticationResponse registerDoctor(Doctor request,Long hospitalId){
-
+        request.setRole(Role.DOCTOR);
         Doctor doctor  = doctorService.saveDoctor(request,hospitalId);
         var jwtToken = jwtService.generateToken((UserDetails) doctor);
         var refreshToken = jwtService.generateRefreshToken((UserDetails) doctor);
@@ -101,6 +104,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(refreshToken)
                 .role("DOCTOR")
                 .id(doctor.getId())
+                .build();
+    }
+    @Override
+    public AuthenticationResponse registerSuperAdmin(SuperAdmin request){
+        request.setRole(Role.SUPER_ADMIN);
+        var jwtToken = jwtService.generateToken((UserDetails) request);
+        var refreshToken = jwtService.generateRefreshToken((UserDetails) request);
+
+        saveUserToken(request, jwtToken);
+
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .role("SUPER_ADMIN")
+                .id(request.getId())
                 .build();
     }
     @Override

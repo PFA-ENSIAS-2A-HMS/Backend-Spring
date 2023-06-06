@@ -37,4 +37,9 @@ public class Appointment {
     private List<Invoice> invoice;
 
     private AppointmentStatus status;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
+    private Hospital hospital;
+
 }
